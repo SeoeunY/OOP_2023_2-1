@@ -50,6 +50,27 @@ void myMusic::print() {//해당 곡 정보 출력
 	cout << "----------" << endl;
 }
 
+char* except(char* a) {//앞뒤 공백 삭제
+	int i = 0;
+	while (a[i] == ' ')
+		i++;
+	if (i > 0) {//맨앞 공백 삭제
+		int j = 0;
+		while (a[i + j] != '\0') {
+			a[j] = a[i + j];
+			j++;
+		}
+		a[j] = '\0';
+	}
+
+	int len = strlen(a);//맨뒤 공백 삭제
+	while (len > 0 && a[len - 1] == ' ')
+		len--;
+	a[len] = '\0';
+
+	return a;
+}
+
 int main() {
 	myMusic* Music[100]{};
 	char command[20]{};
@@ -65,25 +86,32 @@ int main() {
 			else {
 				Music[cnt] = new myMusic;//메모리 동적 할당
 				char info[1000]{};
-				cin >> info;
+				cin.getline(info,1000,'\n');
+				char* info_ptr = info;//띄어쓰기 무시
 				char* ptr = NULL;
+				char* ptr_copy = NULL;
 
-				ptr = strtok(info, ",");
+				ptr = strtok(info_ptr, ",");
+				ptr = except(ptr);
+				if (strlen(ptr) > 32) {
+					cout << "Title too long :(" << endl;
+					continue;
+				}
 				Music[cnt]->setTitle(ptr);//이름 저장
 
 				ptr = strtok(NULL, ",");
-				Music[cnt]->setSinger(ptr);//가수 저장
+				Music[cnt]->setSinger(except(ptr));//가수 저장
 
 				ptr = strtok(NULL, ",");
-				Music[cnt]->setAlbum(ptr);//앨범명 저장
+				Music[cnt]->setAlbum(except(ptr));//앨범명 저장
 
 				int num = 0;
 				ptr = strtok(NULL, ",");
-				num = atoi(ptr);//숫자 정수형으로 변환
+				num = atoi(except(ptr));//숫자 정수형으로 변환
 				Music[cnt]->setYear(num);//발매 연도 저장
 
 				ptr = strtok(NULL, ",");
-				num = atoi(ptr);//숫자 정수형으로 변환
+				num = atoi(except(ptr));//숫자 정수형으로 변환
 				Music[cnt]->setTrackNo(num);//트랙 넘버 저장
 
 				cnt++;
